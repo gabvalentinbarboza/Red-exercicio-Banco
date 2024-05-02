@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+		function inicio() {
+			let escolha = parseInt(prompt('Selecione o número da opção desejada: \n1.) Saldo \n2.) Extrato \n3.) Saque \n4.) Depósito \n5.) Transferência \n6.) Sair\n'));
+
+			switch(escolha)
+			{
+				case 1:
+					ver_saldo();
+					break
+				case 2:
+					ver_extrato();
+					break
+				case 3:
+					fazer_saque();
+					break
+				case 4:
+					fazer_deposito();
+					break
+				case 5:
+					fazer_transferencia();
+					break
+				case 6:
+					sair();
+					break
+				default:
+					erro();
+					break
+			}
+		}
+
+		// Parâmetro: Função para chamar em caso de erro de senha. Isso cria um "loop" até a senha ser correta.
+		function validar_senha(funcao)
+		{
+			var senha = parseInt(prompt("Senha: "))
+			
+			if (senha == 3589)
+			{
+				return // Retorna vazio para sair do "loop" e continuar a execução.
+			}
+
+			alert("Senha incorreta!")
+			funcao() // Chama a função específica para continuar tentando autenticar.
+		}
+		
+		// Parâmetros: Valor a ser validado; Função para chamar em caso de erro; Se saldo precisa ser validado.
+		function validar_valor(valor, funcao, validarSaldo=false) // Por padrão, não precisa validar saldo.
+		{
+			// isNan -> Não é um número (como uma string, caractere etc).
+			if (isNaN(valor) || valor === '') 
+			{
+				alert('Por favor, informe um número:');
+				funcao(necessarioSenha=false); // Usuário já foi autenticado para entrar na função. Não precisa autenticar novamente!
+			}
+			else if (valor <= 0)
+			{
+				alert("Operação não permitida!")
+				funcao(necessarioSenha=false)
+			}
+			else if (validarSaldo)
+			{
+				if ((saldo - valor) < 0) // Exemplo: Saque de R$500 com saldo de apenas R$100. Nesse caso, saldo - valor é menor que zero, então a operação não é permitida!
+				{
+					alert("Saldo insuficiente. Operação não permitida!")
+					funcao(necessarioSenha=false)
+				}
+			}
+		}
+
+		// Parâmetro: Por padrão, senha é necessária. Se não, altere para "false" ao chamar a função. Ex: ver_saldo(necessarioSenha=false)
+		function ver_saldo(necessarioSenha=true) {
+			// Verifica se a senha precisa ser validada.
+			if (necessarioSenha)
+			{
+				validar_senha(ver_saldo) // Chama a função de validação de senha.
+			}
+
+			alert(`Seu saldo atual é: ${saldo}`); // Usando ` ` para usar a sintaxe de formatação `${variavel}`
+			inicio();
+		}
+
+		function ver_extrato(necessarioSenha=true) {
+			if (necessarioSenha)
+			{
+				validar_senha(ver_extrato)
+			}
+
+			alert("EXTRATO\n    Ação    |    Valor    | Saldo\n  Padaria  |  R$15,60  | R$50,50\nDepósito |  R$50,00  | R$100,50"); // Exibindo o extrato na tela
+			inicio();
+		}
+
+		function fazer_saque(necessarioSenha=true) {
+			if (necessarioSenha)
+			{
+				validar_senha(fazer_saque)
+			}
+
+			let saque = parseFloat(prompt("Qual o valor para saque?"));
+
+			// Passando como parâmetro: valor do saque, função atual (fazer saque) sem executá-la, booleano para validar o saldo.
+			validar_valor(saque, fazer_saque, validarSaldo=true) // Chama a função atual como parâmetro para criar um "loop" até que o valor seja válido.
+
+			saldo -= saque;
+			ver_saldo(necessarioSenha=false); // Não precisa autenticar o usuário. Ele já foi autenticado e estamos apenas atualizando o valor do saldo!
+			
+		}
+
+		function fazer_deposito(necessarioSenha=true) {
+			if (necessarioSenha)
+			{
+				validar_senha(fazer_deposito)
+			}
+
+			let deposito = parseFloat(prompt('Qual o valor para depósito?'));
+
+			validar_valor(deposito, fazer_deposito)
+
+			saldo += deposito;
+			ver_saldo(necessarioSenha=false);
+		}
+
+		function fazer_transferencia(necessarioSenha=true) {
+			if (necessarioSenha)
+			{
+				validar_senha(fazer_transferencia)
+			}
+
+			let codigoContaTransferencia = parseInt(prompt('Qual o código da conta?'));
+			let valorTransferencia = parseFloat(prompt('Qual o valor da transferência?'));
+			
+			validar_valor(valorTransferencia, fazer_transferencia, validarSaldo=true)
+			
+			saldo -= valorTransferencia
+			ver_saldo(necessarioSenha=false)
+		}
+
+		// Procedimento para encerrar o programa.
+		function sair() {
+			var confirma = confirm('Você deseja sair?'); // Pop-up que retorna "true" se o usuário clicar em "Ok" e retorna "false" se clicar em "Cancelar"
+			if (confirma) {
+				window.close(); // Fecha a janela.
+			} 
+			else {
+				inicio();
+			}
+		}
+
+		function erro() {
+			alert('Por favor, informe um número entre 1 e 6');
+			inicio();
+		}
+
+		// =-=-=-=--=-=-=-=-= CÓDIGO PRINCIPAL =-=-=-=--=-=-=-=-=
+	
+		// Saldo inicial declarado como "var" para ter escopo global.
+		var saldo = 100.5;
+		
+		let nome = prompt("Qual seu nome? ")
+		alert(`Olá ${nome}, é um prazer ter você por aqui!`)
+
+		inicio();
+
+		alert(`${nome} foi um prazer ter você por aqui!`)
+	</script> 
+</body>
+</html>
